@@ -66,7 +66,7 @@ namespace MotorTributarioNet.Impostos.Csosns
 
             decimal percentualReducao = tributavel.PercentualReducao;
             tributavel.PercentualReducao = 0m;
-            
+
             CalculaCredito(tributavel);
 
             tributavel.PercentualReducao = percentualReducao;
@@ -74,41 +74,50 @@ namespace MotorTributarioNet.Impostos.Csosns
 
         private void CalculaCredito(ITributavel tributavel)
         {
-            PercentualCredito = tributavel.PercentualCredito;
+            if (tributavel.PercentualCredito > 0M)
+            {
+                PercentualCredito = tributavel.PercentualCredito;
 
-            var facade = new FacadeCalculadoraTributacao(tributavel, TipoDesconto);
-            var resultadoCalculaCredito = facade.CalculaIcmsCredito();
-            ValorCredito = resultadoCalculaCredito.Valor;
+                var facade = new FacadeCalculadoraTributacao(tributavel, TipoDesconto);
+                var resultadoCalculaCredito = facade.CalculaIcmsCredito();
+                ValorCredito = resultadoCalculaCredito.Valor;
+            }
         }
 
         private void CalculaIcmsSt(ITributavel tributavel)
         {
-            PercentualMva = tributavel.PercentualMva;
-            PercentualReducaoSt = tributavel.PercentualReducaoSt;
-            PercentualIcmsSt = tributavel.PercentualIcmsSt;
+            if (tributavel.PercentualIcmsSt > 0M)
+            {
+                PercentualMva = tributavel.PercentualMva;
+                PercentualReducaoSt = tributavel.PercentualReducaoSt;
+                PercentualIcmsSt = tributavel.PercentualIcmsSt;
 
-            var facade = new FacadeCalculadoraTributacao(tributavel, TipoDesconto);
+                var facade = new FacadeCalculadoraTributacao(tributavel, TipoDesconto);
 
-            tributavel.ValorIpi = facade.CalculaIpi().Valor;
+                tributavel.ValorIpi = facade.CalculaIpi().Valor;
 
-            var resultadoCalculoIcmsSt = facade.CalculaIcmsSt();
+                var resultadoCalculoIcmsSt = facade.CalculaIcmsSt();
 
-            ValorBcIcmsSt = resultadoCalculoIcmsSt.BaseCalculoIcmsSt;
-            ValorIcmsSt = resultadoCalculoIcmsSt.ValorIcmsSt;
+                ValorBcIcmsSt = resultadoCalculoIcmsSt.BaseCalculoIcmsSt;
+                ValorIcmsSt = resultadoCalculoIcmsSt.ValorIcmsSt;
+            }
         }
 
         private void CalculaIcms(ITributavel tributavel)
         {
-            PercentualReducaoIcmsBc = tributavel.PercentualReducao;
-            PercentualIcms = tributavel.PercentualIcms;
+            if (tributavel.PercentualIcms > 0)
+            {
+                PercentualReducaoIcmsBc = tributavel.PercentualReducao;
+                PercentualIcms = tributavel.PercentualIcms;
 
-            var facade = new FacadeCalculadoraTributacao(tributavel, TipoDesconto);
+                var facade = new FacadeCalculadoraTributacao(tributavel, TipoDesconto);
 
-            tributavel.ValorIpi = facade.CalculaIpi().Valor;
+                tributavel.ValorIpi = facade.CalculaIpi().Valor;
 
-            var resultadoCalculoIcms = facade.CalculaIcms();
-            ValorBcIcms = resultadoCalculoIcms.BaseCalculo;
-            ValorIcms = resultadoCalculoIcms.Valor;
+                var resultadoCalculoIcms = facade.CalculaIcms();
+                ValorBcIcms = resultadoCalculoIcms.BaseCalculo;
+                ValorIcms = resultadoCalculoIcms.Valor;
+            }
         }
     }
 }
